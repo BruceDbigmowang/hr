@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-    <title>主页</title>
+    <title>留言板</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="keywords" content="" />
@@ -104,30 +104,29 @@
     <section id="main-content">
 
         <section class="wrapper">
-
-            <div style="margin-left: 30%;margin-top: 20%">
-                <table>
-                    <tr><td colspan="2" style="width:700px;height:50px;font-size: 28px;"><strong>绿云系统介绍</strong></td></tr>
-                    <tr>
-                        <td style="width: 200px;height:50px;font-size: 24px">1、语言选择</td>
-                        <td style="width: 500px;height:50px;font-size: 24px">Java</td>
-                    </tr>
-                    <tr>
-                        <td style="width: 200px;height:50px;font-size: 24px">2、开发框架</td>
-                        <td style="width: 500px;height:50px;font-size: 24px">springboot</td>
-                    </tr>
-                    <tr>
-                        <td style="width: 200px;height:50px;font-size: 24px">3、数据库</td>
-                        <td style="width: 500px;height:50px;font-size: 24px">MySQL</td>
-                    </tr>
-                    <tr>
-                        <td style="width: 200px;height:50px;font-size: 24px">4、前端</td>
-                        <td style="width: 500px;height:50px;font-size: 24px">html、js、jquery、ajax</td>
-                    </tr>
-
-                </table>
+            <div>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                    新建留言
+                </button>
             </div>
-
+            <div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title">留言板</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>写下你的留言</p>
+                            <textarea id="message" class="form-control"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                            <button class="btn btn-primary" type="button" onclick="editMessage()">提交</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div>
         </section>
 
     </section>
@@ -145,6 +144,22 @@
 <!-- calendar -->
 <script type="text/javascript" src="js/monthly.js"></script>
 
-<!-- //calendar -->
+<script>
+    function editMessage(){
+        var message = document.getElementById("message").value;
+        $.ajax({
+            type:"post",
+            data:{"message":message},
+            url:"editMessage",
+            async:false,
+            success:function (data) {
+                alert("留言成功");
+            },
+            error:function () {
+                alert("留言失败");
+            }
+        })
+    }
+</script>
 </body>
 </html>
