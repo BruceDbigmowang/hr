@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -25,6 +26,7 @@ public class MessageController {
         bean.setContent(message);
         bean.setAccount(account);
         bean.setName(name);
+        bean.setDataTime(new Date());
         messageService.save(bean);
     }
     @RequestMapping("/getAllMessage")

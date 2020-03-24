@@ -3,6 +3,7 @@ package com.example.hr.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.sql.Timestamp;
 
 @Entity
@@ -21,7 +22,7 @@ public class Message {
     @Column(name = "name")
     String name;
     @Column(name = "DataTime")
-    Timestamp DataTime;
+    Date DataTime;
 
     public int getId() {
         return id;
@@ -55,11 +56,11 @@ public class Message {
         this.name = name;
     }
 
-    public Timestamp getDataTime() {
+    public Date getDataTime() {
         return DataTime;
     }
 
-    public void setDataTime(Timestamp dataTime) {
+    public void setDataTime(Date dataTime) {
         DataTime = dataTime;
     }
 }

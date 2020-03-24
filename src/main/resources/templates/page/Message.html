@@ -109,6 +109,12 @@
                     新建留言
                 </button>
             </div>
+            <h1 style="text-align: center">留言板</h1>
+            <div>
+                <table id="allMessage" class="table" border="1px" style="background-color: white;">
+
+                </table>
+            </div>
             <div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -145,6 +151,23 @@
 <script type="text/javascript" src="js/monthly.js"></script>
 
 <script>
+
+    function myTime(date){
+        var arr=date.split("T");
+        var d=arr[0];
+        var darr = d.split('-');
+
+        var t=arr[1];
+        var tarr = t.split('.000');
+        var marr = tarr[0].split(':');
+
+        var dd = parseInt(darr[0])+"/"+parseInt(darr[1])+"/"+parseInt(darr[2]);
+        return dd;
+    }
+
+    $(function(){
+        getAllMessage();
+    })
     function editMessage(){
         var message = document.getElementById("message").value;
         $.ajax({
@@ -153,6 +176,7 @@
             url:"editMessage",
             async:false,
             success:function (data) {
+                getAllMessage();
                 alert("留言成功");
             },
             error:function () {
@@ -160,6 +184,24 @@
             }
         })
     }
+    function getAllMessage() {
+        $.ajax({
+            type:"post",
+            url:"getAllMessage",
+            async:false,
+            success:function (data) {
+                $("#allMessage").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#allMessage").append("<tr>+" +
+                            '<td style="width: 600px;height:100px;font-size: 22px;">'+data[i].content+"</td>"+"</tr>"+
+                            "<tr>"+'<td style="width: 600px;font-size: 14px;text-align: right">'+data[i].name+"于"+myTime(data[i].dataTime)+"留言"+"</td>"+
+                        "</tr>"+"<tr>"+"<td>"+""+"</td>"+"</tr>");
+                }
+            }
+        })
+    }
+
+
 </script>
 </body>
 </html>
