@@ -110,10 +110,8 @@
                 </button>
             </div>
             <h1 style="text-align: center">留言板</h1>
-            <div>
-                <table id="allMessage" class="table" border="1px" style="background-color: white;">
+            <div id="allMessage">
 
-                </table>
             </div>
             <div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog">
@@ -192,10 +190,12 @@
             success:function (data) {
                 $("#allMessage").html("");
                 for(var i = 0 ; i < data.length ; i++){
-                    $("#allMessage").append("<tr>+" +
-                            '<td style="width: 600px;height:100px;font-size: 22px;">'+data[i].content+"</td>"+"</tr>"+
-                            "<tr>"+'<td style="width: 600px;font-size: 14px;text-align: right">'+data[i].name+"于"+myTime(data[i].dataTime)+"留言"+"</td>"+
-                        "</tr>"+"<tr>"+"<td>"+""+"</td>"+"</tr>");
+                    // $("#allMessage").append("<tr>+" +
+                    //         '<td style="width: 600px;height:100px;font-size: 22px;">'+data[i].content+"</td>"+"</tr>"+
+                    //         "<tr>"+'<td style="width: 600px;font-size: 14px;text-align: right">'+data[i].name+"于"+myTime(data[i].dataTime)+"留言"+"</td>"+
+                    //     "</tr>"+"<tr>"+"<td>"+""+"</td>"+"</tr>");
+                    $("#allMessage").append('<div class="jumbotron" style="margin-left: 13%;width: 800px;">'+"<h3>"+data[i].content+"</h3>"+'<p style="margin-left: 68%">'+data[i].name+"于"+myTime(data[i].dataTime)+"留言"+"</p>"+"</div>");
+
                 }
             }
         })
