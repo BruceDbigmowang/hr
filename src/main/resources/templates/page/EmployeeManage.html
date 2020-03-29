@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-    <title>Home</title>
+    <title>人员管理</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="keywords" content="" />
@@ -142,7 +142,45 @@
     <!--main content start-->
     <section id="main-content">
 
-        <section class="wrapper"></section>
+        <section class="wrapper">
+
+            <div style="position: relative;width: 1000px;height:700px;margin-left: 8%;">
+                <div style="position: absolute;width: 300px;height: 600px;float: left;">
+                    <table class="table" style="font-size: 18px;background-color: white;">
+                        <thead>
+                        <tr>
+                            <td style="display: none">部门编号</td>
+                            <td>部门名称</td>
+                        </tr>
+                        </thead>
+                        <tbody id="allDept" onclick="TabClick()"></tbody>
+                    </table>
+                </div>
+
+                <div style="position: absolute;width: 500px;height: 600px;float: left;margin-left: 400px;">
+                    <table class="table" style="font-size: 18px;background-color: white;">
+                        <thead>
+                        <tr>
+                            <td style="width: 250px;">员工工号</td>
+                            <td style="width:250px;">员工姓名</td>
+                        </tr>
+                        </thead>
+                        <tbody id="allAccount"></tbody>
+                    </table>
+                </div>
+
+                <div style="position: absolute;width: 900px;height: 100px;float: left;margin-top: 600px;">
+                    所属部门<select id="dept" class="dropdown" style="width:200px;font-size: 18px;">
+                    <option value="0">--请选择--</option>
+                </select>
+                    员工工号<input id="account" style="width: 200px;font-size: 18px;">
+                    员工姓名<input id="name" style="width: 200px;font-size: 18px;">
+                    <button class="btn btn-primary" onclick="checkEmployeeAccount()">提交</button>
+                </div>
+
+            </div>
+
+        </section>
 
     </section>
     <!--main content end-->
@@ -159,6 +197,106 @@
 <!-- calendar -->
 <script type="text/javascript" src="js/monthly.js"></script>
 
-<!-- //calendar -->
+<script>
+    $(function () {
+        showAllDept();
+    })
+
+    function showAllDept() {
+        $.ajax({
+            type:"post",
+            url:"getAllDept",
+            async:false,
+            success:function(data){
+                $("#allDept").html("");
+                $("#dept").html("");
+                $("#dept").append('<option value="'+0+'">'+"---请选择---"+"</option>");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#allDept").append("<tr>"+'<td style="display: none">'+data[i].code+"</td>"+"<td>"+data[i].name+"</td>"+"/");
+                    $("#dept").append('<option value="'+data[i].code+'">'+data[i].name+"</option>");
+                }
+            }
+        })
+    }
+
+    function TabClick(){
+        var td = event.srcElement;
+        var rowNo = td.parentElement.rowIndex-1;
+        var deptCode = document.getElementById("allDept").rows[rowNo].cells[0].innerHTML;
+        $.ajax({
+            type:"post",
+            data:{"dept":deptCode},
+            url:"getEmployee",
+            async:false,
+            success:function(data) {
+                $("#allAccount").html("");
+                if(data.length == 0){
+                    alert("暂无员工信息");
+                }else{
+                    for(var i = 0 ; i < data.length ; i++){
+                        $("#allAccount").append("<tr>"+"<td>"+data[i].account+"</td>"+"<td>"+data[i].name+"</td>"+"</tr>");
+                    }
+                }
+
+            }
+        })
+
+    }
+
+    function checkEmployeeAccount() {
+        var dept = document.getElementById("dept").value;
+        if(dept == 0){
+            alert("请选择部门");
+            return false;
+        }
+
+        var account = document.getElementById("account").value;
+        if(account.length != 6){
+            alert("员工账号的长度只允许6位");
+            return false;
+        }
+        var name = document.getElementById("name").value;
+        if(name == ""){
+            alert("请填写员工姓名");
+            return false;
+        }
+        $.ajax({
+            type:"post",
+            data:{"account":account},
+            url:"checkAccount",
+            async:false,
+            success:function (data) {
+                if(data==true){
+                    saveAccount();
+                }else{
+                    alert("该账号已存在");
+                }
+            }
+        })
+    }
+
+    function saveAccount(){
+        var dept = document.getElementById("dept").value;
+        var account = document.getElementById("account").value;
+        var name = document.getElementById("name").value;
+        var data={"deptCode":dept , "account":account , "name":name};
+        var url="saveEmployee";
+        $.ajax({
+            type:"post",
+            data:data,
+            url:url,
+            async:false,
+            success:function (data) {
+                alert("数据保存成功");
+
+            },
+            error:function () {
+                alert("数据保存失败");
+            }
+        })
+    }
+
+</script>
+
 </body>
 </html>

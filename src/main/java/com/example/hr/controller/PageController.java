@@ -49,5 +49,49 @@ public class PageController {
     public String Message(){
         return "page/Message";
     }
+    @GetMapping("/toDeptManage")
+    public String DeptManage(){
+        return "page/DeptManage";
+    }
+
+    @GetMapping("/toEmployeeManage")
+    public String employee(){
+        return "page/EmployeeManage";
+    }
+
+    @GetMapping("/toProfessional")
+    public String professional(){
+        return  "page/Professional";
+    }
+
+    @GetMapping("/toLeave")
+    public String leave(){
+        return  "page/Leave";
+    }
+
+    @GetMapping("/toAttendance")
+    public String attendance(){
+        return "page/Attendance";
+    }
+
+    @GetMapping("/toBussinessTrip")
+    public String tbussinessTrip(){
+        return "page/BussinessTrip";
+    }
+
+    @GetMapping("/toAward")
+    public String award(){
+        return "page/Award";
+    }
+
+    @GetMapping("/toSalary")
+    public String salary(){
+        return "page/Salary";
+    }
+
+    @GetMapping("/toHRManager")
+    public String HRManage(){
+        return "page/HRManage";
+    }
 
 }

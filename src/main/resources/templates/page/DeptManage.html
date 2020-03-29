@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-    <title>Home</title>
+    <title>部门管理</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="keywords" content="" />
@@ -142,7 +142,39 @@
     <!--main content start-->
     <section id="main-content">
 
-        <section class="wrapper"></section>
+        <section class="wrapper">
+
+            <div style="position: relative;margin-left: 5%;height:800px;">
+                <div style="position: absolute;float: left;width: 900px;height:600px;overflow: auto">
+                    <h3 style="margin-left: 45%;">所有部门列表</h3>
+                    <table class="table" border="1px" style="font-size: 18px;margin-left: 5%;background-color: white;width: 800px;">
+                        <thead>
+                            <tr>
+                                <td>部门编号</td><td>部门名称</td>
+                            </tr>
+                        </thead>
+                        <tbody id="allDept"></tbody>
+                    </table>
+                </div>
+                <div style="position: absolute;float: left;margin-top: 650px;">
+                    <span>部门代码</span><input id="deptCode" style="width:300px;height: 30px;font-size: 18px;">
+                    <span>部门名称</span><input id="deptName" style="width:300px;height: 30px;font-size: 18px;">
+                    <button class="btn btn-primary" onclick="checkDeptCode()">提交</button>
+<!--                    <div style="position: relative">-->
+<!--                        <div style="position: absolute">-->
+<!--                                -->
+<!--                        </div>-->
+<!--                        <div style="position: absolute;margin-left: 500px;">-->
+<!--                            <span>部门名称</span><input style="width:300px;height: 30px;font-size: 18px;">-->
+<!--                        </div>-->
+<!--                        <div style="position: absolute;margin-left: 900px;">-->
+<!--                            -->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+            </div>
+
+        </section>
 
     </section>
     <!--main content end-->
@@ -158,7 +190,67 @@
 
 <!-- calendar -->
 <script type="text/javascript" src="js/monthly.js"></script>
+<script>
+    $(function(){
+        showAllDept();
+    })
 
+    function showAllDept(){
+        $.ajax({
+            type:"post",
+            url:"getAllDept",
+            async:false,
+            success:function (data) {
+                $("#allDept").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#allDept").append("<tr>"+"<td>"+data[i].code+"</td>"+"<td>"+data[i].name+"</td>"+"</tr>");
+                }
+            }
+        })
+    }
+
+    function checkDeptCode(){
+        var deptCode = document.getElementById("deptCode").value;
+
+        if(deptCode.length != 4){
+            alert("部门编号长度只能是4位");
+            return false;
+        }
+
+        $.ajax({
+            type:"post",
+            data:{"deptCode":deptCode},
+            url:"checkDept",
+            async:false,
+            success:function(data){
+                if(data == "OK"){
+                    createDept();
+                }else{
+                    alert(data);
+                }
+            }
+        })
+    }
+
+    function createDept() {
+        var deptCode = document.getElementById("deptCode").value;
+        var deptName = document.getElementById("deptName").value;
+        $.ajax({
+            type:"post",
+            data:{"deptCode":deptCode , "deptName":deptName},
+            url:"createDept",
+            async:false,
+            success:function (data) {
+                alert("新部门创建成功");
+                showAllDept();
+            },
+            error:function () {
+                alert("创建失败");
+            }
+        })
+
+    }
+</script>
 <!-- //calendar -->
 </body>
 </html>
