@@ -17,6 +17,10 @@ public class Employee {
     String account;
     @Column(name = "name")
     String name;
+    @Column(name = "profession")
+    String profession;
+    @Column(name = "salary")
+    int salary;
 
     public int getId() {
         return id;
@@ -40,5 +44,21 @@ public class Employee {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getProfession() {
+        return profession;
+    }
+
+    public void setProfession(String profession) {
+        this.profession = profession;
+    }
+
+    public int getSalary() {
+        return salary;
+    }
+
+    public void setSalary(int salary) {
+        this.salary = salary;
     }
 }

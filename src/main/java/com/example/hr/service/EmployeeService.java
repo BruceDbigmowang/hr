@@ -6,6 +6,7 @@ import com.example.hr.pojo.DeptAndEmployee;
 import com.example.hr.pojo.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,5 +50,23 @@ public class EmployeeService {
         employee.setAccount(account);
         employee.setName(name);
         employeeDAO.save(employee);
+    }
+
+    @Transactional
+    public void updateProfession(int id , String profession){
+        employeeDAO.updateProfession(id , profession);
+    }
+
+    public void updateSalary(int id , int salary){
+        employeeDAO.updateSalary(id , salary);
+    }
+
+    public String getEmployeeName(String account){
+        List<Employee> employeeList = employeeDAO.findByAccount(account);
+        if(employeeList == null || employeeList.size() == 0){
+            return null;
+        }else{
+            return employeeList.get(0).getName();
+        }
     }
 }

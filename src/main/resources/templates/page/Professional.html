@@ -24,6 +24,142 @@
     <script src="js/morris.js"></script>
 </head>
 <body>
+
+<script>
+    $(function () {
+        showAllDept();
+    })
+
+    function showAllDept() {
+        $.ajax({
+            type:"post",
+            url:"getAllDept",
+            async:false,
+            success:function(data){
+                $("#allDept").html("");
+                $("#dept").html("");
+                $("#dept").append('<option value="'+0+'">'+"---请选择---"+"</option>");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#allDept").append("<tr>"+'<td style="display: none">'+data[i].code+"</td>"+"<td>"+data[i].name+"</td>"+"/");
+                    $("#dept").append('<option value="'+data[i].code+'">'+data[i].name+"</option>");
+                }
+            }
+        })
+    }
+
+    function TabClick(){
+        var td = event.srcElement;
+        var rowNo = td.parentElement.rowIndex-1;
+        var deptCode = document.getElementById("allDept").rows[rowNo].cells[0].innerHTML;
+        $.ajax({
+            type:"post",
+            data:{"dept":deptCode},
+            url:"getEmployee",
+            async:false,
+            success:function(data) {
+                $("#allAccount").html("");
+                if(data.length == 0){
+                    alert("暂无员工信息");
+                }else{
+                    for(var i = 0 ; i < data.length ; i++){
+                        $("#allAccount").append("<tr>"+'<td style="display: none">'+data[i].account+"</td>"+"<td>"+data[i].name+"</td>"+"<td>"+data[i].profession+"</td>"+"<td>"+'<button class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="loadProfessionInfo(this)">更改职称</button> '+"</td>"+"</tr>");
+                    }
+                }
+
+            }
+        })
+
+    }
+
+
+    function loadProfessionInfo(obj ) {
+        var $td = $(obj).parents('tr').children('td');
+        var account = $td.eq(0).text();
+        var name = $td.eq(1).text();
+        $("#account").val(account);
+        $("#name").val(name);
+        $.ajax({
+            type:"post",
+            url:"findAllProfession",
+            async:false,
+            success:function(data){
+                $("#profession").html("");
+                if(data.length == 0){
+                    alert("暂无数据");
+                }else{
+                    $("#profession").append('<option value="'+0+'">'+"--请选择--"+"</option>");
+                    for(var i = 0 ; i < data.length ; i++){
+                        $("#profession").append('<option value="'+data[i].pcode+'">'+data[i].pname+"</option>");
+                    }
+                }
+            }
+        })
+    }
+
+    function changeProfession(){
+        var account = document.getElementById("account").value;
+        var profession = document.getElementById("profession").value;
+        if(profession == 0){
+            alert("请选择职称");
+            return false;
+        }
+        var data = {"account":account , "profession":profession};
+        var url = "changeProfession";
+        $.ajax({
+            type:"post",
+            data:data,
+            url:url,
+            async:false,
+            success:function(data){
+                alert("职称修改成功");
+            }
+        })
+    }
+
+    function checkProfessionData() {
+        var pcode = document.getElementById("pcode").value;
+        if(pcode.length != 4){
+            alert("职称编码只允许4位");
+            return false;
+        }
+        var pname = document.getElementById("pname").value;
+        if(pname == ""){
+            alert("请输入职称描述");
+            return false;
+        }
+        $.ajax({
+            type:"post",
+            data:{"pcode":pcode},
+            url:"professionExist",
+            async:false,
+            success:function(data){
+                if(data == true){
+                    alert("职称编码已存在");
+                }else{
+                    createProfession();
+                }
+            }
+        })
+    }
+
+    function createProfession(){
+        var pcode = document.getElementById("pcode").value;
+        var pname = document.getElementById("pname").value;
+        var data = {"pcode":pcode , "pname":pname};
+        var url = "createProfession";
+        $.ajax({
+            type:"post",
+            data:data,
+            url:url,
+            async:false,
+            success:function(data){
+                alert("职称信息新增成功");
+            }
+        })
+    }
+
+</script>
+
 <section id="container">
     <!--header start-->
     <header class="header fixed-top clearfix">
@@ -123,7 +259,7 @@
                     <li>
                         <a href="toSalary">
                             <i class="fa fa-user"></i>
-                            <span>工资管理管理</span>
+                            <span>工资管理</span>
                         </a>
                     </li>
 
@@ -142,7 +278,76 @@
     <!--main content start-->
     <section id="main-content">
 
-        <section class="wrapper"></section>
+        <section class="wrapper">
+
+            <div style="position: relative;width: 1000px;height:700px;margin-left: 8%;">
+                <div style="position: absolute;width: 300px;height: 600px;float: left;">
+                    <table class="table" style="font-size: 18px;background-color: white;">
+                        <thead>
+                        <tr>
+                            <td style="display: none">部门编号</td>
+                            <td>部门名称</td>
+                        </tr>
+                        </thead>
+                        <tbody id="allDept" onclick="TabClick()"></tbody>
+                    </table>
+                </div>
+
+                <div style="position: absolute;width: 500px;height: 600px;float: left;margin-left: 400px;">
+                    <table class="table" style="font-size: 18px;background-color: white;">
+                        <thead>
+                        <tr>
+                            <td style="display: none">账号</td>
+                            <td style="width: 200px;">员工姓名</td>
+                            <td style="width:200px;">员工职称</td>
+                            <td style="width:200px;">操作</td>
+                        </tr>
+                        </thead>
+                        <tbody id="allAccount"></tbody>
+                    </table>
+                </div>
+
+                <div style="position: absolute;width: 900px;height: 100px;float: left;margin-top: 600px;">
+                    职称编码<input id="pcode" style="width: 200px;font-size: 18px;">
+                    职称描述<input id="pname" style="width: 200px;font-size: 18px;">
+                    <button class="btn btn-primary" onclick="checkProfessionData()">提交</button>
+                </div>
+
+            </div>
+
+            <div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title">修改职称</h4>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table">
+                                <tr>
+                                    <td>员工账号</td>
+                                    <td><input id="account" style="font-size: 18px;" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td>员工姓名</td>
+                                    <td><input id="name" style="font-size: 18px;" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td>职称</td>
+                                    <td><select id="profession" class="dropdown" style="width:200px;"></select></td>
+                                </tr>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                            <button class="btn btn-primary" type="button" onclick="changeProfession()">提交</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div>
+
+        </section>
 
     </section>
     <!--main content end-->

@@ -24,6 +24,81 @@
     <script src="js/morris.js"></script>
 </head>
 <body>
+<script>
+    $(function(){
+        getAllAward();
+    })
+
+    function format(inputTime) {
+        var date = new Date(inputTime);
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        m = m < 10 ? ('0' + m) : m;
+        var d = date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+        var h = date.getHours();
+        h = h < 10 ? ('0' + h) : h;
+        var minute = date.getMinutes();
+        var second = date.getSeconds();
+        minute = minute < 10 ? ('0' + minute) : minute;
+        second = second < 10 ? ('0' + second) : second;
+        return y + '-' + m + '-' + d;
+    }
+
+    function getAllAward(){
+        $.ajax({
+            type:"post",
+            url:"getAllAwardRecord",
+            async:false,
+            success:function(data) {
+                $("#allAward").html("");
+                if (data.length == 0) {
+                    alert("暂无数据");
+                } else {
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].status == "O") {
+                            $("#allAward").append("<tr>" + "<td>" + data[i].account + "</td>" + "<td>" + data[i].reason + "</td>" + "<td>" + data[i].way + "</td>" + "<td>" + format(data[i].datetime) + "</td>" + "<td>" + '<button class="btn btn-primary" onclick="changeStatus( '+data[i].id+')">'+"确认发放</button>" + "</td>" + "</tr>");
+                        } else {
+                            $("#allAward").append("<tr>" + "<td>" + data[i].account + "</td>" + "<td>" + data[i].reason + "</td>" + "<td>" + data[i].way + "</td>" + "<td>" + format(data[i].datetime) + "</td>" + "<td>" + "已发放" + "</td>" + "</tr>");
+                        }
+                    }
+                }
+
+            }
+        })
+    }
+
+    function createAward() {
+        var account = document.getElementById("account").value;
+        var reason = document.getElementById("reason").value;
+        var way = document.getElementById("way").value;
+        var data={"account":account , "reason":reason , "way":way};
+        var url = "writeAward";
+        $.ajax({
+            type:"post",
+            data:data,
+            url:url,
+            async:false,
+            success:function(data){
+                alert("数据写入成功");
+                getAllAward();
+            }
+        })
+    }
+
+    function changeStatus(id) {
+        $.ajax({
+            type:"post",
+            data:{"id":id},
+            url:"changeStatus",
+            async:false,
+            success:function (data) {
+                alert("奖励已发放");
+                getAllAward();
+            }
+        })
+    }
+</script>
 <section id="container">
     <!--header start-->
     <header class="header fixed-top clearfix">
@@ -142,7 +217,56 @@
     <!--main content start-->
     <section id="main-content">
 
-        <section class="wrapper"></section>
+        <section class="wrapper">
+            <div>
+                <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">新建奖励</button>
+            </div>
+
+            <div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title">创建新奖励记录</h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <table style="font-size: 18px;background-color: white;width:300px;">
+                                <tr>
+                                    <td style="height:50px;">奖励人</td>
+                                    <td style="height:50px;"><input id="account" style="font-size: 18px;width:200px;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="height:50px;">奖励原因</td>
+                                    <td style="height:100px;">
+                                        <textarea id="reason" class="form-control"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="height:50px;">奖励方式</td>
+                                    <td style="height:50px;"><input id="way" style="font-size: 18px;width:200px;"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                            <button class="btn btn-primary" type="button" onclick="createAward()">提交</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div>
+
+            <div>
+                <table class="table" style="background-color: white;font-size: 18px;">
+                    <thead>
+                        <tr>
+                            <td>奖励人员</td><td>奖励原因</td><td>奖励形式</td><td>时间</td><td>奖励发放</td>
+                        </tr>
+                    </thead>
+                    <tbody id="allAward"></tbody>
+                </table>
+            </div>
+        </section>
 
     </section>
     <!--main content end-->
