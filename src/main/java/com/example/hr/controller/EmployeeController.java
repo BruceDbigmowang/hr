@@ -62,4 +62,9 @@ public class EmployeeController {
         Employee employee = employeeService.findByAccount(account);
         employeeService.updateSalary(employee.getId() , salary);
     }
+
+    @RequestMapping("/changeHRRelation")
+    public void changeRelation(@RequestParam("account")String account , @RequestParam("dept")String dept){
+        employeeService.createRelation(dept , account);
+    }
 }
