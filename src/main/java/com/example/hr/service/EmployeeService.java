@@ -69,4 +69,13 @@ public class EmployeeService {
             return employeeList.get(0).getName();
         }
     }
+
+    @Transactional
+    public void createRelation(String dept , String account){
+        deptAndEmployeeDAO.deleteByAccount(account);
+        DeptAndEmployee deptAndEmployee = new DeptAndEmployee();
+        deptAndEmployee.setAccount(account);
+        deptAndEmployee.setDept(dept);
+        deptAndEmployeeDAO.save(deptAndEmployee);
+    }
 }

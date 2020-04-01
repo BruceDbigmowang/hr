@@ -24,6 +24,102 @@
     <script src="js/morris.js"></script>
 </head>
 <body>
+
+<script>
+    $(function () {
+        showAllDept();
+    })
+
+    function showAllDept() {
+        $.ajax({
+            type:"post",
+            url:"getAllDept",
+            async:false,
+            success:function(data){
+                $("#allDept").html("");
+                $("#dept").html("");
+                $("#dept").append('<option value="'+0+'">'+"---请选择---"+"</option>");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#allDept").append("<tr>"+'<td style="display: none">'+data[i].code+"</td>"+"<td>"+data[i].name+"</td>"+"/");
+                    $("#dept").append('<option value="'+data[i].code+'">'+data[i].name+"</option>");
+                }
+            }
+        })
+    }
+
+    function TabClick(){
+        var td = event.srcElement;
+        var rowNo = td.parentElement.rowIndex-1;
+        var deptCode = document.getElementById("allDept").rows[rowNo].cells[0].innerHTML;
+        $.ajax({
+            type:"post",
+            data:{"dept":deptCode},
+            url:"getEmployee",
+            async:false,
+            success:function(data) {
+                $("#allAccount").html("");
+                if(data.length == 0){
+                    alert("暂无员工信息");
+                }else{
+                    for(var i = 0 ; i < data.length ; i++){
+                        $("#allAccount").append("<tr>"+"<td>"+data[i].account+"</td>"+"<td>"+data[i].name+"</td>"+"<td>"+'<button class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="loadProfessionInfo(this)">部门调整</button> '+"</td>"+"</tr>");
+                    }
+                }
+
+            }
+        })
+
+    }
+
+
+    function loadProfessionInfo(obj ) {
+        var $td = $(obj).parents('tr').children('td');
+        var account = $td.eq(0).text();
+        var name = $td.eq(1).text();
+        $("#account").val(account);
+        $("#name").val(name);
+        $.ajax({
+            type:"post",
+            url:"getAllDept",
+            async:false,
+            success:function(data){
+                $("#dept").html("");
+                if(data.length == 0){
+                    alert("暂无数据");
+                }else{
+                    $("#dept").append('<option value="'+0+'">'+"--请选择--"+"</option>");
+                    for(var i = 0 ; i < data.length ; i++){
+                        $("#dept").append('<option value="'+data[i].code+'">'+data[i].name+"</option>");
+                    }
+                }
+            }
+        })
+    }
+
+    function changeHRRelation(){
+        var account = document.getElementById("account").value;
+        var dept = document.getElementById("dept").value;
+        if(dept == 0){
+            alert("请选部门称");
+            return false;
+        }
+        var data = {"account":account , "dept":dept};
+        var url = "changeHRRelation";
+        $.ajax({
+            type:"post",
+            data:data,
+            url:url,
+            async:false,
+            success:function(data){
+                alert("部门调整成功");
+            }
+        })
+    }
+
+
+
+</script>
+
 <section id="container">
     <!--header start-->
     <header class="header fixed-top clearfix">
@@ -123,7 +219,7 @@
                     <li>
                         <a href="toSalary">
                             <i class="fa fa-user"></i>
-                            <span>工资管理管理</span>
+                            <span>工资管理</span>
                         </a>
                     </li>
 
@@ -142,7 +238,70 @@
     <!--main content start-->
     <section id="main-content">
 
-        <section class="wrapper"></section>
+        <section class="wrapper">
+
+            <div style="position: relative;width: 1000px;height:700px;margin-left: 8%;">
+                <div style="position: absolute;width: 300px;height: 600px;float: left;">
+                    <table class="table" style="font-size: 18px;background-color: white;">
+                        <thead>
+                        <tr>
+                            <td style="display: none">部门编号</td>
+                            <td>部门名称</td>
+                        </tr>
+                        </thead>
+                        <tbody id="allDept" onclick="TabClick()"></tbody>
+                    </table>
+                </div>
+
+                <div style="position: absolute;width: 500px;height: 600px;float: left;margin-left: 400px;">
+                    <table class="table" style="font-size: 18px;background-color: white;">
+                        <thead>
+                        <tr>
+                            <td style="width: 200px;">员工账号</td>
+                            <td style="width: 200px;">员工姓名</td>
+                            <td style="width:200px;">操作</td>
+                        </tr>
+                        </thead>
+                        <tbody id="allAccount"></tbody>
+                    </table>
+                </div>
+
+
+            </div>
+
+            <div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title">人事调动</h4>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table">
+                                <tr>
+                                    <td>员工账号</td>
+                                    <td><input id="account" style="font-size: 18px;" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td>员工姓名</td>
+                                    <td><input id="name" style="font-size: 18px;" readonly></td>
+                                </tr>
+                                <tr>
+                                    <td>部门调整</td>
+                                    <td><select id="dept" class="dropdown" style="width:200px;"></select></td>
+                                </tr>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                            <button class="btn btn-primary" type="button" onclick="changeHRRelation()">提交</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div>
+
+        </section>
 
     </section>
     <!--main content end-->
