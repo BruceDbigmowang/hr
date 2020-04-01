@@ -22,8 +22,101 @@
     <script src="js/jquery2.0.3.min.js"></script>
     <script src="js/raphael-min.js"></script>
     <script src="js/morris.js"></script>
+    <script src="js/laydate.js"></script>
+    <link rel="stylesheet" href="css/laydate.css">
 </head>
 <body>
+
+<script>
+    $(function(){
+        getAllVocation();
+    })
+
+    function format(inputTime) {
+        var date = new Date(inputTime);
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        m = m < 10 ? ('0' + m) : m;
+        var d = date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+        var h = date.getHours();
+        h = h < 10 ? ('0' + h) : h;
+        var minute = date.getMinutes();
+        var second = date.getSeconds();
+        minute = minute < 10 ? ('0' + minute) : minute;
+        second = second < 10 ? ('0' + second) : second;
+        return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second;
+    }
+
+    function getAllVocation() {
+        $.ajax({
+            type:"post",
+            url:"getAllVocation",
+            async:false,
+            success:function(data){
+                $("#allVocation").html("");
+                if(data.length == 0){
+                    alert("暂无数据");
+                }else{
+                    for(var i = 0 ; i < data.length ; i++){
+                        if(data[i].status == "F"){
+                            $("#allVocation").append("<tr>"+"<td>"+data[i].leaveDay+"</td>"+"<td>"+data[i].account+"</td>"+"<td>"+format(data[i].bdate)+"</td>"+"<td>"+format(data[i].edate)+"</td>"+"<td>"+data[i].duration+"小时"+"</td>"+"<td>"+data[i].reason+"</td>"+"<td>"+'<button class="btn btn-primary" onclick="approveVocation('+data[i].id+')">审批通过</button>'+"</td>"+"</tr>");
+                        }else{
+                            $("#allVocation").append("<tr>"+"<td>"+data[i].leaveDay+"</td>"+"<td>"+data[i].account+"</td>"+"<td>"+format(data[i].bdate)+"</td>"+"<td>"+format(data[i].edate)+"</td>"+"<td>"+data[i].duration+"小时"+"</td>"+"<td>"+data[i].reason+"</td>"+"<td>"+"已审批"+"</td>"+"</tr>");
+
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    $(function() {
+        laydate.render({
+            elem: '#bdate',
+            trigger: 'click',
+            type: 'datetime'
+        });
+        laydate.render({
+            elem: '#edate',
+            trigger: 'click',
+            type:'datetime'
+        });
+    })
+
+    function writeVocation(){
+        var account = document.getElementById("account").value;
+        var bdate = document.getElementById("bdate").value
+        var edate = document.getElementById("edate").value;
+        var reason = document.getElementById("reason").value;
+        var data = {"account":account , "bdate":bdate , "edate":edate , "reason":reason};
+        var url="saveVocation";
+        $.ajax({
+            type:"post",
+            data:data,
+            url:url,
+            async:false,
+            success:function(data){
+                alert(data);
+                getAllVocation();
+            }
+        })
+    }
+
+    function approveVocation(id) {
+        $.ajax({
+            type:"post",
+            data:{"id":id},
+            url:"changeVocationStatus",
+            async:false,
+            success:function(data){
+                alert("已审批通过");
+                getAllVocation();
+            }
+        })
+    }
+</script>
+
 <section id="container">
     <!--header start-->
     <header class="header fixed-top clearfix">
@@ -123,7 +216,7 @@
                     <li>
                         <a href="toSalary">
                             <i class="fa fa-user"></i>
-                            <span>工资管理管理</span>
+                            <span>工资管理</span>
                         </a>
                     </li>
 
@@ -142,7 +235,68 @@
     <!--main content start-->
     <section id="main-content">
 
-        <section class="wrapper"></section>
+        <section class="wrapper">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">新建请假</button>
+            <div>
+                <table class="table" style="font-size: 18px;background-color: white;">
+                    <thead>
+                        <tr>
+                            <td>请假日期</td>
+                            <td>请假员工</td>
+                            <td>开始时间</td>
+                            <td>结束时间</td>
+                            <td>请假时长</td>
+                            <td>请假原因</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody id="allVocation"></tbody>
+                </table>
+            </div>
+
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">
+                                新建请假
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table" style="font-size: 18px;">
+                                <tr style="height:50px;">
+                                    <td>员工账号</td>
+                                    <td><input id="account" style="font-size: 18px;width: 200px;"></td>
+                                </tr>
+                                <tr style="height:50px;">
+                                    <td>开始时间</td>
+                                    <td><input id="bdate" style="font-size: 18px;width: 200px;"></td>
+                                </tr>
+                                <tr style="height:50px;">
+                                    <td>结束时间</td>
+                                    <td><input id="edate" style="font-size: 18px;width: 200px;"></td>
+                                </tr>
+                                <tr style="height:100px;">
+                                <td>请假原因</td>
+                                <td rowspan="5"><textarea id="reason" class="form-control"></textarea></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="writeVocation()">
+                                提交
+                            </button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+            </div>
+
+        </section>
 
     </section>
     <!--main content end-->
