@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.Max;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -65,10 +66,67 @@ public class VocationController {
                         return "请假结束时间不应晚于下午5点";
                     }
                     if(days == 0){
-                        duration = hour2-hour1;
 
+                        String leaveDay =new SimpleDateFormat("yyyy-MM-dd").format(bdate);
+                        LocalDate localDate = LocalDate.parse(leaveDay);
+                        int value = localDate.getDayOfWeek().getValue();
+                        if(value==6 ||value==7){
+                            return "今天是周末，不需要请假";
+                        }
+                        duration = hour2-hour1;
                     }else{
-                        duration = 8*days+hour2-9;
+                        //判断起始日期与结束日期是否是周末，若是周末，返回提示消息修改时间
+                        String leaveDay =new SimpleDateFormat("yyyy-MM-dd").format(bdate);
+                        LocalDate localDate = LocalDate.parse(leaveDay);
+                        int value = localDate.getDayOfWeek().getValue();
+                        if(value==6 ||value==7){
+                            return "起始日期是周末，不需要请假";
+                        }
+                        String endDate =new SimpleDateFormat("yyyy-MM-dd").format(edate);
+                        LocalDate elocalDate = LocalDate.parse(endDate);
+                        int value2 = elocalDate.getDayOfWeek().getValue();
+                        if(value2==6 ||value2==7){
+                            return "结束日期是周末，不需要请假";
+                        }
+                        int date1 = bdate.getDate();
+                        int date2 = edate.getDate();
+
+                        String yearAndMonth = new SimpleDateFormat("yyyy-MM").format(bdate);
+                        for(int s = date1 ; s <= date2 ; s++){
+                            if(s != date2){
+                                if(s <10){
+                                    String nowaday1 = yearAndMonth+"-"+"0"+s;
+                                    LocalDate nowDate = LocalDate.parse(nowaday1);
+                                    int flag1 = nowDate.getDayOfWeek().getValue();
+                                    if(flag1!=6 && flag1!=7){
+                                        duration = duration+8;
+                                    }
+                                }else{
+                                    String nowaday1 = yearAndMonth+"-"+s;
+                                    LocalDate nowDate = LocalDate.parse(nowaday1);
+                                    int flag1 = nowDate.getDayOfWeek().getValue();
+                                    if(flag1!=6 && flag1!=7){
+                                        duration = duration+8;
+                                    }
+                                }
+                            }else{
+                                if(s <10){
+                                    String nowaday1 = yearAndMonth+"-"+"0"+s;
+                                    LocalDate nowDate = LocalDate.parse(nowaday1);
+                                    int flag1 = nowDate.getDayOfWeek().getValue();
+                                    if(flag1!=6 && flag1!=7){
+                                        duration = duration+hour2-9;
+                                    }
+                                }else{
+                                    String nowaday1 = yearAndMonth+"-"+s;
+                                    LocalDate nowDate = LocalDate.parse(nowaday1);
+                                    int flag1 = nowDate.getDayOfWeek().getValue();
+                                    if(flag1!=6 && flag1!=7){
+                                        duration = duration+hour2-9;
+                                    }
+                                }
+                            }
+                        }
                         if(hour2 < 9){
                             return "9点之前的时间不在请假范围之内";
                         }

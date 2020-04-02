@@ -25,4 +25,21 @@ public class VocationService {
     public void update(int id , String status){
         vocationDAO.update(id , status);
     }
+
+    public Vocation getByAccountAndLeaveDay(String account , String leaveDay){
+        List<Vocation> vocationList = vocationDAO.findByAccountAndLeaveDayAndStatus(account, leaveDay , "T");
+        if(vocationList == null || vocationList.size() == 0){
+            return null;
+        }else{
+            return vocationList.get(0);
+        }
+    }
+    public List<Vocation> getByMonth(String account , String yearAndMonth){
+        List<Vocation> vocationList = vocationDAO.findByAccountAndLeaveDayLikeAndStatus(account , yearAndMonth , "T");
+        if(vocationList == null || vocationList.size() == 0){
+            return null;
+        }else{
+            return vocationList;
+        }
+    }
 }

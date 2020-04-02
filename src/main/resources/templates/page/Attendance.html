@@ -24,6 +24,49 @@
     <script src="js/morris.js"></script>
 </head>
 <body>
+
+<script>
+    function getThisMonthRecord() {
+        var account = document.getElementById("account").value;
+        $.ajax({
+            type:"post",
+            data:{"account":account},
+            url:"getThisMonthRecord",
+            async:false,
+            success:function(data){
+                $("#allResult").html("");
+                if(data.length == 0){
+                    alert("暂无数据");
+                }else{
+                    for(var i = 0 ; i < data.length ; i++){
+                        $("#allResult").append("<tr>"+"<td>"+data[i].account+"</td>"+"<td>"+data[i].signDay+"</td>"+"<td>"+data[i].result+"</td>"+"</tr>");
+                    }
+                }
+            }
+        })
+    }
+
+    function getLastMonthRecord() {
+        var account = document.getElementById("account").value;
+        $.ajax({
+            type:"post",
+            data:{"account":account},
+            url:"getLastMonthRecord",
+            async:false,
+            success:function(data){
+                $("#allResult").html("");
+                if(data.length == 0){
+                    alert("暂无数据");
+                }else{
+                    for(var i = 0 ; i < data.length ; i++){
+                        $("#allResult").append("<tr>"+"<td>"+data[i].account+"</td>"+"<td>"+data[i].signDay+"</td>"+"<td>"+data[i].result+"</td>"+"</tr>");
+                    }
+                }
+            }
+        })
+    }
+</script>
+
 <section id="container">
     <!--header start-->
     <header class="header fixed-top clearfix">
@@ -142,7 +185,21 @@
     <!--main content start-->
     <section id="main-content">
 
-        <section class="wrapper"></section>
+        <section class="wrapper">
+            <div style="height: 50px;margin-left: 25%;">
+                <input id="account" style="width: 300px;font-size: 16px;height: 30px;"><button class="btn btn-primary" onclick="getThisMonthRecord()">查询当月考勤记录</button><button class="btn btn-primary" onclick="getLastMonthRecord()">查询上个月考勤记录</button>
+            </div>
+            <div>
+                <table class="table" style="font-size: 18px;background-color: white;">
+                    <thead>
+                        <tr>
+                            <td>员工</td><td>日期</td><td>考勤结果</td>
+                        </tr>
+                    </thead>
+                    <tbody id="allResult"></tbody>
+                </table>
+            </div>
+        </section>
 
     </section>
     <!--main content end-->
