@@ -4,6 +4,7 @@ import com.example.hr.pojo.BussinessTrip;
 import com.example.hr.pojo.Vocation;
 import com.example.hr.pojo.WorkRecord;
 import com.example.hr.service.BussinessTripService;
+import com.example.hr.service.EmployeeService;
 import com.example.hr.service.VocationService;
 import com.example.hr.service.WorkRecordService;
 import com.example.hr.utils.Result;
@@ -27,6 +28,8 @@ public class WorkRecordController {
     VocationService vocationService;
     @Autowired
     BussinessTripService bussinessTripService;
+    @Autowired
+    EmployeeService employeeService;
 
     @RequestMapping("/getThisMonthRecord")
     public List<Result> getThisMonth(@RequestParam("account")String account){
@@ -369,6 +372,14 @@ public class WorkRecordController {
                     }
                 }
             }
+            for(int i = 0 ; i < resultList.size() ; i++){
+                Result result = resultList.get(i);
+                String userAccount = result.getAccount();
+                String name = employeeService.getEmployeeName(userAccount);
+                if(name != null){
+                    result.setAccount(name+"("+userAccount+")");
+                }
+            }
             return resultList;
         }
 
@@ -704,6 +715,14 @@ public class WorkRecordController {
                     }
                 }
             }
+        for(int i = 0 ; i < resultList.size() ; i++){
+            Result result = resultList.get(i);
+            String userAccount = result.getAccount();
+            String name = employeeService.getEmployeeName(userAccount);
+            if(name != null){
+                result.setAccount(name+"("+userAccount+")");
+            }
+        }
             return resultList;
 
     }
