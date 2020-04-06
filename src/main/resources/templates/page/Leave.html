@@ -60,7 +60,7 @@
                 }else{
                     for(var i = 0 ; i < data.length ; i++){
                         if(data[i].status == "F"){
-                            $("#allVocation").append("<tr>"+"<td>"+data[i].leaveDay+"</td>"+"<td>"+data[i].account+"</td>"+"<td>"+format(data[i].bdate)+"</td>"+"<td>"+format(data[i].edate)+"</td>"+"<td>"+data[i].duration+"小时"+"</td>"+"<td>"+data[i].reason+"</td>"+"<td>"+'<button class="btn btn-primary" onclick="approveVocation('+data[i].id+')">审批通过</button>'+"</td>"+"</tr>");
+                            $("#allVocation").append("<tr>"+"<td>"+data[i].leaveDay+"</td>"+"<td>"+data[i].account+"</td>"+"<td>"+format(data[i].bdate)+"</td>"+"<td>"+format(data[i].edate)+"</td>"+"<td>"+data[i].duration+"小时"+"</td>"+"<td>"+data[i].reason+"</td>"+"<td>"+'<button class="btn btn-primary" onclick="getIdentity('+data[i].id+')">审批通过</button>'+"</td>"+"</tr>");
                         }else{
                             $("#allVocation").append("<tr>"+"<td>"+data[i].leaveDay+"</td>"+"<td>"+data[i].account+"</td>"+"<td>"+format(data[i].bdate)+"</td>"+"<td>"+format(data[i].edate)+"</td>"+"<td>"+data[i].duration+"小时"+"</td>"+"<td>"+data[i].reason+"</td>"+"<td>"+"已审批"+"</td>"+"</tr>");
 
@@ -86,9 +86,25 @@
 
     function writeVocation(){
         var account = document.getElementById("account").value;
-        var bdate = document.getElementById("bdate").value
+        if(account == ""){
+            alert("员工账号不可为空");
+            return false;
+        }
+        var bdate = document.getElementById("bdate").value;
+        if(bdate == ""){
+            alert("请选择开始时间");
+            return false;
+        }
         var edate = document.getElementById("edate").value;
+        if(edate == ""){
+            alert("请选择结束时间");
+            return false;
+        }
         var reason = document.getElementById("reason").value;
+        if(reason == ""){
+            alert("请填写请假原因");
+            return false;
+        }
         var data = {"account":account , "bdate":bdate , "edate":edate , "reason":reason};
         var url="saveVocation";
         $.ajax({
@@ -99,6 +115,21 @@
             success:function(data){
                 alert(data);
                 getAllVocation();
+            }
+        })
+    }
+
+    function getIdentity(id) {
+        $.ajax({
+            type:"post",
+            url:"isManager",
+            async:false,
+            success:function(data){
+                if(data == true){
+                    approveVocation(id);
+                }else{
+                    alert("该账号无权限审批");
+                }
             }
         })
     }

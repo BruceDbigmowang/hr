@@ -41,4 +41,15 @@ public class AccountController {
             }
         }
     }
+
+    @RequestMapping("/isManager")
+    public boolean manager(HttpSession session){
+        Account user = (Account)session.getAttribute("user");
+        String role = user.getRole();
+        if(role.equals("manager")){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
