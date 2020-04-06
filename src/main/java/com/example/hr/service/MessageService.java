@@ -15,8 +15,10 @@ public class MessageService {
     public void save(Message message){
         messageDAO.save(message);
     }
+    //insert into Message(messageContent , account , name , Datatime)VALUES(....)
 
     public List<Message> findAll(){
         return messageDAO.findAll();
+        // select * from Message;
     }
 }

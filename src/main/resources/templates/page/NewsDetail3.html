@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-    <title>留言板</title>
+    <title>主页</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="keywords" content="" />
@@ -102,7 +102,6 @@
                             <span>流程申请</span>
                         </a>
                     </li>
-
                 </ul>            </div>
             <!-- sidebar menu end-->
         </div>
@@ -112,33 +111,19 @@
     <section id="main-content">
 
         <section class="wrapper">
-            <div>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                    新建留言
-                </button>
-            </div>
-            <h1 style="text-align: center">留言板</h1><br><br>
-            <div id="allMessage" style="top: 0;left: 0;right: 0;bottom: 0;margin: auto;">
 
+            <div style="margin-left: 20%;margin-top: 10%;width:800px;background-color: white;">
+                <h1 style="text-align: center">国家卫健委：全国本土现有确诊降至900例以下</h1>
+                <br>
+                <br>
+                <br>
+                <img src="images/04042.png" style="width:600px;margin-left: 12%">
+                <br>
+                <br>
+                <br>
+                <h3>国家卫生健康委新闻发言人、宣传司副司长米锋介绍，全国本土现有确诊病例降至900例以下，无本土现有疑似病例，湖北除武汉外连续30天无本土新增。</h3>
             </div>
-            <div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                            <h4 class="modal-title">留言板</h4>
-                        </div>
-                        <div class="modal-body">
-                            <p>写下你的留言</p>
-                            <textarea id="message" class="form-control"></textarea>
-                        </div>
-                        <div class="modal-footer">
-                            <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
-                            <button class="btn btn-primary" type="button" onclick="editMessage()">提交</button>
-                        </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal-dialog -->
-            </div>
+
         </section>
 
     </section>
@@ -156,60 +141,6 @@
 <!-- calendar -->
 <script type="text/javascript" src="js/monthly.js"></script>
 
-<script>
-
-    function myTime(date){
-        var arr=date.split("T");
-        var d=arr[0];
-        var darr = d.split('-');
-
-        var t=arr[1];
-        var tarr = t.split('.000');
-        var marr = tarr[0].split(':');
-
-        var dd = parseInt(darr[0])+"/"+parseInt(darr[1])+"/"+parseInt(darr[2]);
-        return dd;
-    }
-
-    $(function(){
-        getAllMessage();
-    })
-    function editMessage(){
-        var message = document.getElementById("message").value;
-        $.ajax({
-            type:"post",
-            data:{"message":message},
-            url:"editMessage",
-            async:false,
-            success:function (data) {
-                getAllMessage();
-                alert("留言成功");
-            },
-            error:function () {
-                alert("留言失败");
-            }
-        })
-    }
-    function getAllMessage() {
-        $.ajax({
-            type:"post",
-            url:"getAllMessage",
-            async:false,
-            success:function (data) {
-                $("#allMessage").html("");
-                for(var i = 0 ; i < data.length ; i++){
-                    // $("#allMessage").append("<tr>+" +
-                    //         '<td style="width: 600px;height:100px;font-size: 22px;">'+data[i].content+"</td>"+"</tr>"+
-                    //         "<tr>"+'<td style="width: 600px;font-size: 14px;text-align: right">'+data[i].name+"于"+myTime(data[i].dataTime)+"留言"+"</td>"+
-                    //     "</tr>"+"<tr>"+"<td>"+""+"</td>"+"</tr>");
-                    $("#allMessage").append('<div class="jumbotron" style="margin-left: 13%;width: 800px;">'+'<h3 style="margin-left: 5%;">'+data[i].content+"</h3>"+'<p style="margin-left: 68%">'+data[i].name+"于"+myTime(data[i].dataTime)+"留言"+"</p>"+"</div>");
-
-                }
-            }
-        })
-    }
-
-
-</script>
+<!-- //calendar -->
 </body>
 </html>

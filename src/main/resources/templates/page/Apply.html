@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-    <title>出差管理</title>
+    <title>流程申请</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="keywords" content="" />
@@ -26,11 +26,8 @@
     <link rel="stylesheet" href="css/laydate.css">
 </head>
 <body>
-<script>
-    $(function(){
-        getAllTrip();
-    })
 
+<script>
     $(function() {
         laydate.render({
             elem: '#bdate',
@@ -42,52 +39,41 @@
             trigger: 'click',
             type:'datetime'
         });
+        laydate.render({
+            elem: '#bdate2',
+            trigger: 'click',
+            type: 'datetime'
+        });
+        laydate.render({
+            elem: '#edate2',
+            trigger: 'click',
+            type:'datetime'
+        });
     })
 
-    function format(inputTime) {
-        var date = new Date(inputTime);
-        var y = date.getFullYear();
-        var m = date.getMonth() + 1;
-        m = m < 10 ? ('0' + m) : m;
-        var d = date.getDate();
-        d = d < 10 ? ('0' + d) : d;
-        var h = date.getHours();
-        h = h < 10 ? ('0' + h) : h;
-        var minute = date.getMinutes();
-        var second = date.getSeconds();
-        minute = minute < 10 ? ('0' + minute) : minute;
-        second = second < 10 ? ('0' + second) : second;
-        return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second;
-    }
-
-    function getAllTrip() {
+    function writeVocation(){
+        var account = document.getElementById("account").value;
+        var bdate = document.getElementById("bdate").value
+        var edate = document.getElementById("edate").value;
+        var reason = document.getElementById("reason").value;
+        var data = {"account":account , "bdate":bdate , "edate":edate , "reason":reason};
+        var url="saveVocation";
         $.ajax({
             type:"post",
-            url:"getAllBussinessTrip",
+            data:data,
+            url:url,
             async:false,
             success:function(data){
-                $("#allTrip").html("");
-                if(data.length == 0){
-                    alert("暂无数据");
-                }else{
-                    for(var i = 0 ; i < data.length ; i++){
-                        if(data[i].status == "F"){
-                            $("#allTrip").append("<tr>"+"<td>"+data[i].day+"</td>"+"<td>"+data[i].account+"</td>"+"<td>"+format(data[i].bdate)+"</td>"+"<td>"+format(data[i].edate)+"</td>"+"<td>"+data[i].duration+"小时"+"</td>"+"<td>"+data[i].reason+"</td>"+"<td>"+'<button class="btn btn-primary" onclick="approveTrip('+data[i].id+')">审批通过</button>'+"</td>"+"</tr>");
-                        }else{
-                            $("#allTrip").append("<tr>"+"<td>"+data[i].day+"</td>"+"<td>"+data[i].account+"</td>"+"<td>"+format(data[i].bdate)+"</td>"+"<td>"+format(data[i].edate)+"</td>"+"<td>"+data[i].duration+"小时"+"</td>"+"<td>"+data[i].reason+"</td>"+"<td>"+"已审批"+"</td>"+"</tr>");
-
-                        }
-                    }
-                }
+                alert(data);
             }
         })
     }
 
     function writeTrip(){
-        var account = document.getElementById("account").value;
-        var bdate = document.getElementById("bdate").value
-        var edate = document.getElementById("edate").value;
-        var reason = document.getElementById("reason").value;
+        var account = document.getElementById("account2").value;
+        var bdate = document.getElementById("bdate2").value
+        var edate = document.getElementById("edate2").value;
+        var reason = document.getElementById("reason2").value;
         var data = {"account":account , "bdate":bdate , "edate":edate , "reason":reason};
         var url="saveBussinessTrip";
         $.ajax({
@@ -97,32 +83,31 @@
             async:false,
             success:function(data){
                 alert(data);
-                getAllTrip();
             }
         })
     }
 
-    function approveTrip(id) {
+    function writWorkRecord() {
         $.ajax({
             type:"post",
-            data:{"id":id},
-            url:"changeBussinessTripStatus",
+            url:"writeWorkRecord",
             async:false,
-            success:function(data){
-                alert("已审批通过");
-                getAllTrip();
+            success:function (data) {
+                alert(data);
+            },
+            error:function () {
+                alert("打卡失败");
             }
         })
     }
-
-
 </script>
+
 <section id="container">
     <!--header start-->
     <header class="header fixed-top clearfix">
         <!--logo start-->
         <div class="brand">
-            <a href="toAdminIndex" class="logo">
+            <a href="toUserIndex" class="logo">
                 VISITORS
             </a>
             <div class="sidebar-toggle-box">
@@ -133,9 +118,7 @@
         <div class="top-nav clearfix">
             <!--search & user info start-->
             <ul class="nav pull-right top-menu">
-                <li>
-                    <input type="text" class="form-control search" placeholder=" Search">
-                </li>
+
                 <!-- user login dropdown start-->
                 <li class="dropdown">
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#">
@@ -163,70 +146,40 @@
             <div class="leftside-navigation">
                 <ul class="sidebar-menu" id="nav-accordion">
                     <li>
-                        <a class="active" href="toDeptManage">
+                        <a class="active" href="toNews">
                             <i class="fa fa-dashboard"></i>
-                            <span>部门管理</span>
+                            <span>新闻动态</span>
                         </a>
                     </li>
 
+
                     <li>
-                        <a href="toEmployeeManage">
+                        <a href="toIntroduce">
                             <i class="fa fa-bullhorn"></i>
-                            <span>人员管理</span>
-                        </a>
-                    </li>
-
-
-                    <li>
-                        <a href="toProfessional">
-                            <i class="fa fa-user"></i>
-                            <span>职称管理</span>
+                            <span>人力资源部介绍</span>
                         </a>
                     </li>
 
                     <li>
-                        <a href="toLeave">
+                        <a href="toRecruitment">
                             <i class="fa fa-user"></i>
-                            <span>请假管理</span>
+                            <span>招聘信息</span>
                         </a>
                     </li>
 
                     <li>
-                        <a href="toAttendance">
-                            <i class="fa fa-user"></i>
-                            <span>考勤管理</span>
+                        <a href="toMessage">
+                            <i class="fa fa-glass"></i>
+                            <span>留言板</span>
                         </a>
                     </li>
 
                     <li>
-                        <a href="toBussinessTrip">
-                            <i class="fa fa-user"></i>
-                            <span>出差管理</span>
+                        <a href="toApply">
+                            <i class="fa fa-glass"></i>
+                            <span>流程申请</span>
                         </a>
                     </li>
-
-                    <li>
-                        <a href="toAward">
-                            <i class="fa fa-user"></i>
-                            <span>奖励管理</span>
-                        </a>
-                    </li>
-
-
-                    <li>
-                        <a href="toSalary">
-                            <i class="fa fa-user"></i>
-                            <span>工资管理</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="toHRManager">
-                            <i class="fa fa-user"></i>
-                            <span>人事调动</span>
-                        </a>
-                    </li>
-
                 </ul>            </div>
             <!-- sidebar menu end-->
         </div>
@@ -237,24 +190,18 @@
 
         <section class="wrapper">
 
-<!--            <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">新建出差</button>-->
             <div>
-                <h3>所有出差申请</h3><br>
-                <table class="table" style="font-size: 18px;background-color: white;">
-                    <thead>
-                    <tr>
-                        <td>出差日期</td>
-                        <td>出差员工</td>
-                        <td>开始时间</td>
-                        <td>结束时间</td>
-                        <td>出差时长</td>
-                        <td>出差内容</td>
-                        <td></td>
-                    </tr>
-                    </thead>
-                    <tbody id="allTrip"></tbody>
-                </table>
+                <h3>流程申请————————————</h3><br>
+                <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">新建请假</button>
+                <button class="btn btn-primary" data-toggle="modal" data-target="#myModal2">新建出差</button>
             </div>
+            <br>
+            <br>
+            <div>
+                <h3>签到打卡————————————</h3><br>
+                <button class="btn btn-primary" onclick="writWorkRecord()">打卡签到</button>
+            </div>
+
 
             <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -264,7 +211,7 @@
                                 &times;
                             </button>
                             <h4 class="modal-title" id="myModalLabel">
-                                新建出差
+                                新建请假
                             </h4>
                         </div>
                         <div class="modal-body">
@@ -282,8 +229,51 @@
                                     <td><input id="edate" style="font-size: 18px;width: 200px;"></td>
                                 </tr>
                                 <tr style="height:100px;">
-                                    <td>出差内容</td>
+                                    <td>请假原因</td>
                                     <td rowspan="5"><textarea id="reason" class="form-control"></textarea></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="writeVocation()">
+                                提交
+                            </button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+            </div>
+
+
+            <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel2">
+                                新建出差
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table" style="font-size: 18px;">
+                                <tr style="height:50px;">
+                                    <td>员工账号</td>
+                                    <td><input id="account2" style="font-size: 18px;width: 200px;"></td>
+                                </tr>
+                                <tr style="height:50px;">
+                                    <td>开始时间</td>
+                                    <td><input id="bdate2" style="font-size: 18px;width: 200px;"></td>
+                                </tr>
+                                <tr style="height:50px;">
+                                    <td>结束时间</td>
+                                    <td><input id="edate2" style="font-size: 18px;width: 200px;"></td>
+                                </tr>
+                                <tr style="height:100px;">
+                                    <td>出差内容</td>
+                                    <td rowspan="5"><textarea id="reason2" class="form-control"></textarea></td>
                                 </tr>
                             </table>
                         </div>

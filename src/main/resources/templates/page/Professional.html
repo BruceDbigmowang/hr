@@ -281,7 +281,14 @@
         <section class="wrapper">
 
             <div style="position: relative;width: 1000px;height:700px;margin-left: 8%;">
-                <div style="position: absolute;width: 300px;height: 600px;float: left;">
+                <div style="position: absolute;width: 900px;height: 100px;float: left;">
+                    职称编码<input id="pcode" style="width: 200px;font-size: 18px;">
+                    职称描述<input id="pname" style="width: 200px;font-size: 18px;">
+                    <button class="btn btn-primary" onclick="checkProfessionData()">提交</button>
+                </div>
+
+                <div style="position: absolute;width: 300px;height: 600px;float: left;margin-top: 7%;">
+                    <h3>部门列表</h3><br>
                     <table class="table" style="font-size: 18px;background-color: white;">
                         <thead>
                         <tr>
@@ -293,7 +300,8 @@
                     </table>
                 </div>
 
-                <div style="position: absolute;width: 500px;height: 600px;float: left;margin-left: 400px;">
+                <div style="position: absolute;width: 500px;height: 600px;float: left;margin-left: 400px;margin-top: 7%;">
+                    <h3>员工职称列表</h3><br>
                     <table class="table" style="font-size: 18px;background-color: white;">
                         <thead>
                         <tr>
@@ -307,11 +315,7 @@
                     </table>
                 </div>
 
-                <div style="position: absolute;width: 900px;height: 100px;float: left;margin-top: 600px;">
-                    职称编码<input id="pcode" style="width: 200px;font-size: 18px;">
-                    职称描述<input id="pname" style="width: 200px;font-size: 18px;">
-                    <button class="btn btn-primary" onclick="checkProfessionData()">提交</button>
-                </div>
+
 
             </div>
 

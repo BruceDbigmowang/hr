@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/bootstrap.min.css" >
     <!-- //bootstrap-css -->
     <!-- Custom CSS -->
-    <link href="css/style.css" rel='stylesheet' type='text/css' />
+    <link href="css/style2.css" rel='stylesheet' type='text/css' />
     <link href="css/style-responsive.css" rel="stylesheet"/>
     <!-- font-awesome icons -->
     <link rel="stylesheet" href="css/font.css" type="text/css"/>
@@ -44,18 +44,40 @@
         })
     }
 </script>
+<style>
+    ::-webkit-input-placeholder{/*Webkit browsers*/
+        　　　　color:#999;
+        　　　　font-size:16px;
+        　　　　}
+</style>
 <div class="log-w3">
-    <div class="w3layouts-main">
-        <h2>Sign In Now</h2>
-            <input id="account" type="email" class="ggg" name="account" placeholder="ACCOUNT" required="">
-            <input id="password" type="password" class="ggg" name="password" placeholder="PASSWORD" required="">
-            <span><input type="checkbox" />Remember Me</span>
-            <h6><a href="#">Forgot Password?</a></h6>
-            <div class="clearfix"></div>
-        <button style="width: 300px;height:50px;margin-left: 13%;color: white;background-color: lightpink" onclick="login()">LOGIN</button>
-
-        <p>Don't Have an Account ?<a href="toRegister">Create an account</a></p>
-    </div>
+    <table style="margin-top: 17%;margin-left: 17%;width:300px;">
+        <tr>
+            <td style="height:110px;text-align: center;" >
+                <span style="font-size: 36px;color: #54da73"><strong>用户登录</strong></span>
+            </td>
+        </tr>
+        <tr>
+            <td style="height: 80px;" >
+                <img src="images/icon_06.jpg"><input id="account" type="text" style="border:0;margin-left:1%;width:250px;height: 35px;font-size: 18px;outline: none;" placeholder="输入你的账号" required="">
+            </td>
+        </tr>
+        <tr>
+            <td style="height: 60px;" >
+                <img src="images/icon_08.jpg"><input id="password" type="password" style="border:0;margin-left:2%;width:250px;height: 35px;font-size: 18px;outline: none;" placeholder="输入你的密码" required="">
+            </td>
+        </tr>
+        <tr>
+            <td style="height: 40px;text-align: right;">
+                <span><input type="checkbox" />记住我</span><span style="margin-left: 26%;">还没有账号？<a href="toRegister">立即注册</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center;height: 80px;">
+                <button class="btn btn-success" style="width: 250px;" onclick="login()">登录</button>
+            </td>
+        </tr>
+    </table>
 </div>
 <script src="js/bootstrap.js"></script>
 <script src="js/jquery.dcjqaccordion.2.7.js"></script>

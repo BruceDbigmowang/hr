@@ -1,5 +1,6 @@
 package com.example.hr.controller;
 
+import com.example.hr.pojo.Account;
 import com.example.hr.pojo.BussinessTrip;
 import com.example.hr.pojo.Vocation;
 import com.example.hr.pojo.WorkRecord;
@@ -12,11 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -212,6 +215,12 @@ public class WorkRecordController {
                                         continue;
                                     }
                                 }
+                            }else{
+                                Result consequence = new Result();
+                                consequence.setAccount(account);
+                                consequence.setSignDay(checkDate);
+                                consequence.setResult(checkDate+":考勤正常：已打卡");
+                                resultList.add(consequence);
                             }
 
                         }
@@ -361,6 +370,12 @@ public class WorkRecordController {
                                         continue;
                                     }
                                 }
+                            }else{
+                                Result consequence = new Result();
+                                consequence.setAccount(account);
+                                consequence.setSignDay(checkDate);
+                                consequence.setResult(checkDate+":考勤正常：已打卡");
+                                resultList.add(consequence);
                             }
 
                         }
@@ -547,6 +562,12 @@ public class WorkRecordController {
                                         continue;
                                     }
                                 }
+                            }else{
+                                Result consequence = new Result();
+                                consequence.setAccount(account);
+                                consequence.setSignDay(checkDate);
+                                consequence.setResult(checkDate+":考勤正常：已打卡");
+                                resultList.add(consequence);
                             }
 
                         }
@@ -696,6 +717,12 @@ public class WorkRecordController {
                                         continue;
                                     }
                                 }
+                            }else{
+                                Result consequence = new Result();
+                                consequence.setAccount(account);
+                                consequence.setSignDay(checkDate);
+                                consequence.setResult(checkDate+":考勤正常：已打卡");
+                                resultList.add(consequence);
                             }
 
                         }
@@ -706,6 +733,38 @@ public class WorkRecordController {
             }
             return resultList;
 
+    }
+
+    @RequestMapping("/writeWorkRecord")
+    public String save(HttpSession session){
+        Account user = (Account)session.getAttribute("user");
+        String account = user.getAccount();
+        Date now  = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String signDay = sdf.format(now);
+        Timestamp bdate = new Timestamp(now.getTime());
+        if(!workRecordService.exist(signDay)){
+            WorkRecord workRecord = new WorkRecord();
+            workRecord.setAccount(account);
+            workRecord.setSignDay(signDay);
+            workRecord.setBdate(bdate);
+            workRecordService.save(workRecord);
+            return "上班打卡成功";
+        }else{
+            WorkRecord workRecord = workRecordService.findBySignDay(signDay);
+            if(workRecord.getEdate() == null){
+                int hour = now.getHours();
+                if(hour < 17){
+                    return "下班应于17时之后打卡";
+                }else{
+                    int id = workRecord.getId();
+                    workRecordService.update(id , bdate);
+                    return "下班打卡成功";
+                }
+            }else{
+                return "打卡已完成，无需再打卡";
+            }
+        }
     }
 
 }

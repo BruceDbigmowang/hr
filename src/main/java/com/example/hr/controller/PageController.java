@@ -94,4 +94,24 @@ public class PageController {
         return "page/HRManage";
     }
 
+    @GetMapping("/toApply")
+    public String apply(){
+        return "page/Apply";
+    }
+
+    @GetMapping("/toDetail1")
+    public String detail1(){
+        return "page/NewsDetail1";
+    }
+
+    @GetMapping("/toDetail2")
+    public String detail2(){
+        return "page/NewsDetail2";
+    }
+
+    @GetMapping("/toDetail3")
+    public String detail3(){
+        return "page/NewsDetail3";
+    }
+
 }
