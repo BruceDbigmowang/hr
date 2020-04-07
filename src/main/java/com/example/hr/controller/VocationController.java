@@ -53,8 +53,8 @@ public class VocationController {
                 if(month2-month1 > 0){
                     return "请假不可超过一个月";
                 }else{
-                    int day1 = bdate.getDay();
-                    int day2 = edate.getDay();
+                    int day1 = bdate.getDate();
+                    int day2 = edate.getDate();
                     int days = day2-day1;
                     int hour1 = bdate.getHours();
                     int hour2 = edate.getHours();
